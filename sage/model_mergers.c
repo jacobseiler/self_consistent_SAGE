@@ -14,7 +14,7 @@
 // For BHmodel == 1 need the Eddington Factor. 
 const double epsilon = 1.0;
 const double t_eddington = 6.6524e-29*2.9979e8/(4*3.1415*6.6741e-11*1.6726e-27) / 3.154e13; // Eddington Timescale (Myr).
-#define inverse_eddington_factor (RadioModeEfficiency*t_eddington)/epsilon
+#define eddington_factor epsilon/(RadioModeEfficiency*t_eddington)
 
 double estimate_merging_time(int sat_halo, int mother_halo, int ngal)
 {
@@ -130,6 +130,8 @@ void grow_black_hole(int merger_centralgal, double mass_ratio, int32_t step)
 
       Gal[merger_centralgal].QuasarModeBHaccretionMass += BHaccrete; 
       quasar_mode_wind(merger_centralgal, BHaccrete, step);
+
+      //printf("BHaccrete = %.4e\n", BHaccrete);
     }
     else if (BHmodel == 1)
     {
@@ -159,16 +161,18 @@ void determine_BH_accretion(int32_t p)
   }
 
   double m_eddington;
-  double dt = Age[Gal[p].SnapNum] - Age[Halo[Gal[p].HaloNr].SnapNum];
-
+  double dt = (Age[Gal[p].SnapNum] - Age[Halo[Gal[p].HaloNr].SnapNum]) * UnitTime_in_Megayears;
+  //printf("eddington_factor %.4e dt %.4e\n", eddington_factor, dt);
   // Eddington mass will be the MAXIMUM amount of gas that can be accreted within a time step.
   // It's entirely possible that the merger could happen in the middle of a timestep (e.g., at step = 5).
   // In this case, the Eddington mass SHOULD be scaled to be half of the time step.
   // However because we accrete the mass smoothly over the time step regardless (i.e., add 1/10th of the mass during every substep), this doesn't matter.
   // This is because this calculation is simply determining the MAXIMUM amount of gas that we can accrete.  If we're already part way through a timestep we won't accrete that much.
-  m_eddington = Gal[p].BlackHoleMass * (exp(inverse_eddington_factor * dt) - 1.0);
+  m_eddington = Gal[p].BlackHoleMass * (exp(eddington_factor * dt) - 1.0);
 
-  if (Gal[p].BHmass_still_to_accrete > m_eddington)
+  //printf("m_eddington %.4e\tBHmass_still_to_accrete %.4e\n", m_eddington, Gal[p].BHmass_still_to_accrete);
+
+  if (Gal[p].BHmass_still_to_accrete > m_eddington && m_eddington > 0.0)
   {
     Gal[p].BHmass_accrete_thisstep = m_eddington; 
   }
@@ -186,6 +190,8 @@ void smooth_BH_accretion(int32_t p, int32_t step)
   double accreted_mass = Gal[p].BHmass_accrete_thisstep / STEPS;
 
   // First add the mass that's accreted during this timestep to the BH.
+
+  //printf("accreted_mass %.4e\n", accreted_mass);
 
   Gal[p].BlackHoleMass += accreted_mass; 
   Gal[p].ColdGas -= accreted_mass; 
@@ -211,7 +217,14 @@ void quasar_mode_wind(int gal, float BHaccrete, int32_t step)
   {
     float remaining_energy, hot_energy_ratio, cold_energy_ratio;
 
-    cold_energy_ratio = quasar_energy / cold_gas_energy;
+    if (cold_gas_energy <= 0.0)
+    {
+      cold_energy_ratio = quasar_energy / cold_gas_energy;
+    }
+    else
+    {
+      cold_energy_ratio = 0.0;
+    }
 
     if (cold_energy_ratio > 1.0)
     {
@@ -222,8 +235,15 @@ void quasar_mode_wind(int gal, float BHaccrete, int32_t step)
       Gal[gal].MetalsColdGas = 0.0;
 
       remaining_energy = quasar_energy - cold_gas_energy;
-      hot_energy_ratio = remaining_energy / hot_gas_energy;
-     
+
+      if (hot_gas_energy > 0.0)
+      {
+        hot_energy_ratio = remaining_energy / hot_gas_energy;
+      }
+      else
+      {
+        hot_energy_ratio = 0.0;
+      } 
       if (hot_energy_ratio > 1.0)
       {
         Gal[gal].EjectedMass += Gal[gal].HotGas;
@@ -288,6 +308,15 @@ void quasar_mode_wind(int gal, float BHaccrete, int32_t step)
     }
   }
 
+  if(Gal[gal].ColdGas < 0.0) // Some final checks. 
+    Gal[gal].ColdGas = 0.0;
+  if(Gal[gal].MetalsColdGas < 0.0)
+    Gal[gal].MetalsColdGas = 0.0;
+  if(Gal[gal].HotGas < 0.0)
+    Gal[gal].HotGas = 0.0;
+  if(Gal[gal].MetalsHotGas < 0.0)
+    Gal[gal].MetalsHotGas = 0.0; 
+  
 }
 
 void add_galaxies_together(int t, int p)
