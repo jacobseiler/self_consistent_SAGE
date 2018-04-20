@@ -299,6 +299,11 @@ void evolve_galaxies(int halonr, int ngal, int tree)	// Note: halonr is here the
       do_previous_SN(p, centralgal, deltaT);
     }
 
+    // If we're doing smooth accretion onto BH, determine how much mass needs to be accreted during this evolution step. 
+    if (BHmodel == 1 && p == centralgal)
+    {
+      determine_BH_accretion(p); 
+    }
   }
 
   // We integrate things forward by using a number of intervals equal to STEPS 
@@ -337,7 +342,11 @@ void evolve_galaxies(int halonr, int ngal, int tree)	// Note: halonr is here the
       cool_gas_onto_galaxy(p, coolingGas);
  
       starformation_and_feedback(p, centralgal, time, deltaT / STEPS, halonr, step, tree, ngal);
-
+     
+      if (BHmodel == 1 && Gal[p].BHmass_accrete_thisstep > 0.0 && p == centralgal)
+      {
+        smooth_BH_accretion(p, step);
+      } 
     }
 
     // check for satellite disruption and merger events 

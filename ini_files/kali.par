@@ -2,7 +2,7 @@
 %----- SAGE output file information -------
 %------------------------------------------
 
-FileNameGalaxies       tmp 
+FileNameGalaxies       oldBH 
 OutputDir              /lustre/projects/p004_swin/jseiler/kali/tmp/galaxies
 GridOutputDir          /lustre/projects/p004_swin/jseiler/kali/tmp/grids/nion
 
@@ -48,7 +48,7 @@ AGNrecipeOn           2   ;0: switch off; 1: empirical model; 2: Bondi-Hoyle mod
 SupernovaRecipeOn     1   ;0: switch off
 ReionizationOn        1  ;0: switch off; 1: Base; 2: Use <<Photoionization Options>> to calculate the Sobacchi & Meisinger (2014) filtering Mass. 
 DiskInstabilityOn     1   ;0: switch off; 1: bulge and BH growth through instabilities w. instability starbursts
-
+BHmodel               0   ;0: Original Croton et al. 2016.
 
 %------------------------------------------
 %----- SAGE model parameters --------------

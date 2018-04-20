@@ -62,6 +62,8 @@ void update_from_star_formation(int p, double stars, double dt, int step, bool i
 void update_from_feedback(int p, int centralgal, double reheated_mass, double ejected_mass, double metallicity);
 void make_bulge_from_burst(int p);
 void grow_black_hole(int merger_centralgal, double mass_ratio, int32_t step);
+void determine_BH_accretion(int32_t p);
+void smooth_BH_accretion(int32_t p, int32_t step);
 void check_disk_instability(int p, int centralgal, int halonr, double time, double dt, int step, int tree, int ngal);
 
 void strip_from_satellite(int halonr, int centralgal, int gal, int32_t step);

@@ -78,6 +78,7 @@ int SupernovaRecipeOn;
 int DiskInstabilityOn;
 int AGNrecipeOn;
 int SFprescription;
+int BHmodel;
 
 
 // recipe parameters 

@@ -9,7 +9,12 @@
 #include "core_allvars.h"
 #include "core_proto.h"
 
+// Local Proto-Types //
 
+// For BHmodel == 1 need the Eddington Factor. 
+const double epsilon = 1.0;
+const double t_eddington = 6.6524e-29*2.9979e8/(4*3.1415*6.6741e-11*1.6726e-27) / 3.154e13; // Eddington Timescale (Myr).
+#define inverse_eddington_factor (RadioModeEfficiency*t_eddington)/epsilon
 
 double estimate_merging_time(int sat_halo, int mother_halo, int ngal)
 {
@@ -107,21 +112,94 @@ void grow_black_hole(int merger_centralgal, double mass_ratio, int32_t step)
     if(BHaccrete > Gal[merger_centralgal].ColdGas)
       BHaccrete = Gal[merger_centralgal].ColdGas;
 
-    metallicity = get_metallicity(Gal[merger_centralgal].ColdGas, Gal[merger_centralgal].MetalsColdGas);
-    Gal[merger_centralgal].BlackHoleMass += BHaccrete;
-    Gal[merger_centralgal].ColdGas -= BHaccrete;
-    Gal[merger_centralgal].MetalsColdGas -= metallicity * (BHaccrete);
+    // There are two models possible here for the growth of black holes.
 
-    Gal[merger_centralgal].QuasarModeBHaccretionMass += BHaccrete;
+    // The first is the original Croton 2016 model (BHmodel == 0).
+    // In this model, the BH accretes all of the mass instantaneousl
 
-    quasar_mode_wind(merger_centralgal, BHaccrete, step);
+    // In ths second (BHmodel == 1), the BH accretes an amount of gas limited by the eddington mass.
+    // This will be the amount of mass accreted within the timestep so we smoothly add this over the substeps.
+
+    if (BHmodel == 0)
+    {
+      metallicity = get_metallicity(Gal[merger_centralgal].ColdGas, Gal[merger_centralgal].MetalsColdGas);
+
+      Gal[merger_centralgal].BlackHoleMass += BHaccrete;
+      Gal[merger_centralgal].ColdGas -= BHaccrete;
+      Gal[merger_centralgal].MetalsColdGas -= metallicity * (BHaccrete);
+
+      Gal[merger_centralgal].QuasarModeBHaccretionMass += BHaccrete; 
+      quasar_mode_wind(merger_centralgal, BHaccrete, step);
+    }
+    else if (BHmodel == 1)
+    {
+      Gal[merger_centralgal].BHmass_still_to_accrete += BHaccrete;
+      determine_BH_accretion(merger_centralgal);
+    }
+    else
+    {
+      fprintf(stderr, "An invalid Black Hole growth model was chosen.\n");
+      ABORT(EXIT_FAILURE);
+    }
+
   }
+}
+
+void determine_BH_accretion(int32_t p)
+{
+  // The amount of gas that needs to be accreted onto the black hole is given by Gal[p].BHmass_still_to_accrete.
+  // What we want to find here is how much BH mass can be accreted during this time step.
+  // Then we will add a fraction of that mass during each substep.
+
+  // First check that there is mass to accrete. 
+  if (Gal[p].BHmass_still_to_accrete <= 0.0)
+  {
+    Gal[p].BHmass_accrete_thisstep = 0.0;
+    return;
+  }
+
+  double m_eddington;
+  double dt = Age[Gal[p].SnapNum] - Age[Halo[Gal[p].HaloNr].SnapNum];
+
+  // Eddington mass will be the MAXIMUM amount of gas that can be accreted within a time step.
+  // It's entirely possible that the merger could happen in the middle of a timestep (e.g., at step = 5).
+  // In this case, the Eddington mass SHOULD be scaled to be half of the time step.
+  // However because we accrete the mass smoothly over the time step regardless (i.e., add 1/10th of the mass during every substep), this doesn't matter.
+  // This is because this calculation is simply determining the MAXIMUM amount of gas that we can accrete.  If we're already part way through a timestep we won't accrete that much.
+  m_eddington = Gal[p].BlackHoleMass * (exp(inverse_eddington_factor * dt) - 1.0);
+
+  if (Gal[p].BHmass_still_to_accrete > m_eddington)
+  {
+    Gal[p].BHmass_accrete_thisstep = m_eddington; 
+  }
+  else
+  {
+    Gal[p].BHmass_accrete_thisstep = Gal[p].BHmass_still_to_accrete; 
+  }
+
+}
+
+void smooth_BH_accretion(int32_t p, int32_t step)
+{
+
+  double metallicity = get_metallicity(Gal[p].ColdGas, Gal[p].MetalsColdGas);
+  double accreted_mass = Gal[p].BHmass_accrete_thisstep / STEPS;
+
+  // First add the mass that's accreted during this timestep to the BH.
+
+  Gal[p].BlackHoleMass += accreted_mass; 
+  Gal[p].ColdGas -= accreted_mass; 
+  Gal[p].MetalsColdGas -=  metallicity * accreted_mass; 
+  Gal[p].QuasarModeBHaccretionMass += accreted_mass; 
+
+  // Since we have had a rapid accrete onto the BH, we get an associated pulse of energy.
+  quasar_mode_wind(p, accreted_mass, step);
+
 }
 
 void quasar_mode_wind(int gal, float BHaccrete, int32_t step)
 {
-  float quasar_energy, cold_gas_energy, hot_gas_energy, cold_energy_ratio, remaining_energy, hot_energy_ratio;
-  int32_t fractional_ejection = 0;
+  float quasar_energy, cold_gas_energy, hot_gas_energy; 
 
   // work out total energies in quasar wind (eta*m*c^2), cold and hot gas (1/2*m*Vvir^2)
   
@@ -129,10 +207,12 @@ void quasar_mode_wind(int gal, float BHaccrete, int32_t step)
   cold_gas_energy = 0.5 * Gal[gal].ColdGas * Gal[gal].Vvir * Gal[gal].Vvir;
   hot_gas_energy = 0.5 * Gal[gal].HotGas * Gal[gal].Vvir * Gal[gal].Vvir;
 
-  cold_energy_ratio = quasar_energy / cold_gas_energy;
-
-  if (fractional_ejection == 1)
+  if (BHmodel == 1)
   {
+    float remaining_energy, hot_energy_ratio, cold_energy_ratio;
+
+    cold_energy_ratio = quasar_energy / cold_gas_energy;
+
     if (cold_energy_ratio > 1.0)
     {
       Gal[gal].EjectedMass += Gal[gal].ColdGas;
@@ -179,7 +259,6 @@ void quasar_mode_wind(int gal, float BHaccrete, int32_t step)
   }
   else
   {
-
 
     // compare quasar wind and cold gas energies and eject cold
     if(quasar_energy > cold_gas_energy)

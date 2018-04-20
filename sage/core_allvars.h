@@ -127,7 +127,9 @@ struct GALAXY
   float TimeOfLastMajorMerger;
   float TimeOfLastMinorMerger;
   float OutflowRate;
-	float TotalSatelliteBaryons;
+  float TotalSatelliteBaryons;
+  double BHmass_still_to_accrete; // Mass that needs to be accreted onto the blackhole.
+  double BHmass_accrete_thisstep; // Mass that will be accreted onto the BH during the timestep.    
 
   // infall properties
   float infallMvir;
@@ -298,6 +300,7 @@ extern int    SupernovaRecipeOn;
 extern int    DiskInstabilityOn;
 extern int    AGNrecipeOn;
 extern int    SFprescription;
+extern int    BHmodel;
 
 // recipe parameters 
 extern double RecycleFraction;

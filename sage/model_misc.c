@@ -82,6 +82,9 @@ void init_galaxy(int p, int halonr, int treenr)
   Gal[p].TimeOfLastMinorMerger = -1.0;
   Gal[p].OutflowRate = 0.0;
 	Gal[p].TotalSatelliteBaryons = 0.0;
+  Gal[p].BHmass_still_to_accrete = 0.0; // Mass that needs to be accreted onto the blackhole.
+  Gal[p].BHmass_accrete_thisstep = 0.0; // Mass that will be accreted onto the BH during the timestep.    
+
 	// infall properties
   Gal[p].infallMvir = -1.0;  
   Gal[p].infallVvir = -1.0;
