@@ -60,10 +60,10 @@ void save_galaxies(int filenr, int tree)
 				ABORT(0);
       }
 
+      int32_t number_header_values = 11+(MAXSNAPS*2)+Ntrees;
 			// write out placeholders for the header data.
-			size_t size = (Ntrees + 2)*sizeof(int);
-			int* tmp_buf = (int*)malloc( size );
-			memset( tmp_buf, 0, size );
+			int32_t *tmp_buf = malloc(number_header_values * sizeof(int32_t));
+			memset( tmp_buf, 0, number_header_values * sizeof(int32_t));
 			fwrite( tmp_buf, sizeof(int), Ntrees + 2, save_fd[n] );
 			free( tmp_buf );
 		}
@@ -112,8 +112,20 @@ void finalize_galaxy_file(void)
 
     // seek to the beginning.
     fseek( save_fd[n], 0, SEEK_SET );
-    
-    myfwrite(&Ntrees, sizeof(int), 1, save_fd[n]); 
+  
+    int32_t steps = STEPS;
+ 
+    myfwrite(&steps, sizeof(int32_t), 1, save_fd[n]); 
+    myfwrite(&MAXSNAPS, sizeof(int32_t), 1, save_fd[n]);
+    myfwrite(ZZ, sizeof(*(ZZ)), MAXSNAPS, save_fd[n]); 
+    myfwrite(&Hubble_h, sizeof(double), 1, save_fd[n]);
+    myfwrite(&Omega, sizeof(double), 1, save_fd[n]);
+    myfwrite(&OmegaLambda, sizeof(double), 1, save_fd[n]);
+    myfwrite(&BaryonFrac, sizeof(double), 1, save_fd[n]);
+    myfwrite(&PartMass, sizeof(double), 1, save_fd[n]);
+    myfwrite(&BoxSize, sizeof(double), 1, save_fd[n]);
+    myfwrite(&GridSize, sizeof(int32_t), 1, save_fd[n]);
+    myfwrite(&Ntrees, sizeof(int32_t), 1, save_fd[n]); 
     myfwrite(&TotGalaxies[n], sizeof(int), 1, save_fd[n]);
     myfwrite(TreeNgals[n], sizeof(int), Ntrees, save_fd[n]);
 

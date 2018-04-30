@@ -26,7 +26,7 @@ void init(void)
 
   read_snap_list();
 
-  for(i = 0; i < Snaplistlen; i++)
+  for(i = 0; i < MAXSNAPS; i++)
   {
     ZZ[i] = 1 / AA[i] - 1;
     Age[i] = time_to_present(ZZ[i]);

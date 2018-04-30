@@ -380,10 +380,17 @@ void add_galaxy_to_merger_list(int p)
 
   for (j = 0; j < MAXSNAPS; ++j)
   {
+    MergedGal[MergedNr].GridType[j] = Gal[p].GridType[j];
+    MergedGal[MergedNr].GridFoFHaloNr[j] = Gal[p].GridFoFHaloNr[j];
     MergedGal[MergedNr].GridHistory[j] = Gal[p].GridHistory[j];
     MergedGal[MergedNr].GridColdGas[j] = Gal[p].GridColdGas[j];
     MergedGal[MergedNr].GridHotGas[j] = Gal[p].GridHotGas[j];
+    MergedGal[MergedNr].GridEjectedMass[j] = Gal[p].GridEjectedMass[j];
+    MergedGal[MergedNr].GridDustColdGas[j] = Gal[p].GridDustColdGas[j];
+    MergedGal[MergedNr].GridDustHotGas[j] = Gal[p].GridDustHotGas[j];
+    MergedGal[MergedNr].GridDustEjectedMass[j] = Gal[p].GridDustEjectedMass[j];
     MergedGal[MergedNr].GridStellarMass[j] = Gal[p].GridStellarMass[j];
+    MergedGal[MergedNr].GridBHMass[j] = Gal[p].GridBHMass[j];
     MergedGal[MergedNr].GridSFR[j] = Gal[p].GridSFR[j];
     MergedGal[MergedNr].GridZ[j] = Gal[p].GridZ[j];
     MergedGal[MergedNr].GridFoFMass[j] = Gal[p].GridFoFMass[j];
@@ -391,17 +398,13 @@ void add_galaxy_to_merger_list(int p)
     MergedGal[MergedNr].LenHistory[j] = Gal[p].LenHistory[j];
     MergedGal[MergedNr].GridOutflowRate[j] = Gal[p].GridOutflowRate[j];
     MergedGal[MergedNr].GridInfallRate[j] = Gal[p].GridInfallRate[j];
-    MergedGal[MergedNr].GridEjectedMass[j] = Gal[p].GridEjectedMass[j];
     MergedGal[MergedNr].QuasarActivity[j] = Gal[p].QuasarActivity[j];
-    MergedGal[MergedNr].DynamicalTime[j] = Gal[p].DynamicalTime[j];
     MergedGal[MergedNr].QuasarSubstep[j] = Gal[p].QuasarSubstep[j];
+    MergedGal[MergedNr].DynamicalTime[j] = Gal[p].DynamicalTime[j];
     MergedGal[MergedNr].LenMergerGal[j] = Gal[p].LenMergerGal[j];
-    MergedGal[MergedNr].GridBHMass[j] = Gal[p].GridBHMass[j];
     MergedGal[MergedNr].GridReionMod[j] = Gal[p].GridReionMod[j];
-    MergedGal[MergedNr].GridDustColdGas[j] = Gal[p].GridDustColdGas[j];
-    MergedGal[MergedNr].GridDustHotGas[j] = Gal[p].GridDustHotGas[j];
-    MergedGal[MergedNr].GridDustEjectedMass[j] = Gal[p].GridDustEjectedMass[j];
-    MergedGal[MergedNr].GridType[j] = Gal[p].GridType[j];
+    MergedGal[MergedNr].GridNgamma_HI[j] = Gal[p].GridNgamma_HI[j];
+    MergedGal[MergedNr].Gridfesc[j] = Gal[p].Gridfesc[j];
   }
 
   for (j = 0; j < SN_Array_Len; ++j)

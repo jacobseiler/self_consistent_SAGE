@@ -97,28 +97,31 @@ void init_galaxy(int p, int halonr, int treenr)
  
   for (j = 0; j < MAXSNAPS; ++j)
   {
+    Gal[p].GridType[j] = 0;
+    Gal[p].GridFoFHaloNr[j] = -1;
     Gal[p].GridHistory[j] = -1;
     Gal[p].GridColdGas[j] = 0.0;
     Gal[p].GridHotGas[j] = 0.0;
+    Gal[p].GridEjectedMass[j] = 0.0;
+    Gal[p].GridDustColdGas[j] = 0.0;
+    Gal[p].GridDustHotGas[j] = 0.0;
+    Gal[p].GridDustEjectedMass[j] = 0.0;
     Gal[p].GridStellarMass[j] = 0.0;
+    Gal[p].GridBHMass[j] = 0.0;
     Gal[p].GridSFR[j] = 0.0;
-    Gal[p].GridZ[j] = -1;
-    Gal[p].GridFoFMass[j] = -1.0;
-    Gal[p].EjectedFraction[j] = -1.0;
+    Gal[p].GridZ[j] = 0.0;
+    Gal[p].GridFoFMass[j] = 0.0;
+    Gal[p].EjectedFraction[j] = 0.0;
     Gal[p].LenHistory[j] = -1;
     Gal[p].GridOutflowRate[j] = 0.0;
     Gal[p].GridInfallRate[j] = 0.0;
-    Gal[p].GridEjectedMass[j] = 0.0;
     Gal[p].QuasarActivity[j] = 0;
-    Gal[p].DynamicalTime[j] = 0.0;
     Gal[p].QuasarSubstep[j] = -1;
+    Gal[p].DynamicalTime[j] = 0.0;
     Gal[p].LenMergerGal[j] = -1;
-    Gal[p].GridBHMass[j] = 0.0;
     Gal[p].GridReionMod[j] = -1.0;
-    Gal[p].GridDustColdGas[j] = 0.0;
-    Gal[p].GridDustHotGas[j] = 0.0;
-    Gal[p].GridEjectedMass[j] = 0.0;
-    Gal[p].GridType[j] = 0;
+    Gal[p].GridNgamma_HI[j] = 0.0;
+    Gal[p].Gridfesc[j] = 0.0;
   }
 
   for (j = 0; j < SN_Array_Len; ++j)
