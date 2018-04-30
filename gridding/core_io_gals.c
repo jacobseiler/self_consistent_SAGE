@@ -84,6 +84,12 @@ int32_t load_gals(char *fname)
     ALLOCATE_ARRAY_MEMORY(GalGrid[i].EjectedDustMass, MAXSNAPS, 1);
     ALLOCATE_ARRAY_MEMORY(GalGrid[i].Type, MAXSNAPS, 1);
 
+
+    if (GalGrid[i].History[MAXSNAPS - 1] == -1)
+    {
+      printf("Found a galaxy with -1 GridHistory\n"); 
+    }
+
 #ifdef DEBUG_GALS
     if (i == 53)
     {
@@ -97,7 +103,7 @@ int32_t load_gals(char *fname)
   } // Galaxy Loop
 
   printf("Read in %ld total galaxies.\n", (long)NtotGals);
-
+  exit(EXIT_FAILURE);
   // We will now allocate memory for storing the escape fraction value of each galaxy.
 
   for (i = 0;i<Grid->NumGrids; ++i)

@@ -12,7 +12,6 @@
 #include "core_proto.h"
 
 
-
 void construct_galaxies(int halonr, int tree, int filenr)
 {
   static int halosdone = 0;
@@ -72,7 +71,6 @@ void construct_galaxies(int halonr, int tree, int filenr)
 }
 
 
-
 int join_galaxies_of_progenitors(int treenr, int halonr, int ngalstart)
 {
   int ngal, prog, i, j, first_occupied, lenmax, lenoccmax, centralgal;
@@ -112,7 +110,6 @@ int join_galaxies_of_progenitors(int treenr, int halonr, int ngalstart)
   {
     for(i = 0; i < HaloAux[prog].NGalaxies; i++)
     {
-
       if(ngal == (FoF_MaxGals-1)) 
       {
         printf("Current FoF_MaxGals = %d. Reallocing.\n", FoF_MaxGals);
@@ -276,7 +273,6 @@ int join_galaxies_of_progenitors(int treenr, int halonr, int ngalstart)
 }
 
 
-
 void evolve_galaxies(int halonr, int ngal, int tree)	// Note: halonr is here the FOF-background subhalo (i.e. main halo) 
 {
   int p, i, step, centralgal, merger_centralgal, currenthalo, offset;
@@ -308,7 +304,6 @@ void evolve_galaxies(int halonr, int ngal, int tree)	// Note: halonr is here the
     // Loop over all galaxies in the halo 
     for(p = 0; p < ngal; p++)
     {
-
       // Don't treat galaxies that have already merged 
       if(Gal[p].mergeType > 0)
         continue;
@@ -431,9 +426,8 @@ void evolve_galaxies(int halonr, int ngal, int tree)	// Note: halonr is here the
   offset = 0;
   for(p = 0, currenthalo = -1; p < ngal; p++)
   {
-
     if(Gal[p].HaloNr != currenthalo)
-    {
+    {      
       currenthalo = Gal[p].HaloNr;
       HaloAux[currenthalo].FirstGalaxy = NumGals;
       HaloAux[currenthalo].NGalaxies = 0;

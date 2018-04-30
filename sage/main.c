@@ -225,6 +225,7 @@ int main(int argc, char **argv)
       save_galaxies(filenr, tree);
       save_merged_galaxies(filenr, tree);    
       free_galaxies_and_tree(tree);
+      break;
     }
 
     finalize_galaxy_file();  

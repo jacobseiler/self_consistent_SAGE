@@ -13,7 +13,6 @@ void init_galaxy(int p, int halonr, int treenr)
 {
   int32_t j, step, status;
   
-  ++count_gal;
 	assert(halonr == Halo[halonr].FirstHaloInFOFgroup);
 
   Gal[p].Type = 0;
@@ -99,6 +98,8 @@ void init_galaxy(int p, int halonr, int treenr)
   for (j = 0; j < MAXSNAPS; ++j)
   {
     Gal[p].GridHistory[j] = -1;
+    Gal[p].GridColdGas[j] = 0.0;
+    Gal[p].GridHotGas[j] = 0.0;
     Gal[p].GridStellarMass[j] = 0.0;
     Gal[p].GridSFR[j] = 0.0;
     Gal[p].GridZ[j] = -1;
@@ -111,7 +112,6 @@ void init_galaxy(int p, int halonr, int treenr)
     Gal[p].QuasarActivity[j] = 0;
     Gal[p].DynamicalTime[j] = 0.0;
     Gal[p].QuasarSubstep[j] = -1;
-    Gal[p].GridColdGas[j] = 0.0;
     Gal[p].LenMergerGal[j] = -1;
     Gal[p].GridBHMass[j] = 0.0;
     Gal[p].GridReionMod[j] = -1.0;

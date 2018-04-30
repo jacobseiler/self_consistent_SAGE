@@ -381,6 +381,8 @@ void add_galaxy_to_merger_list(int p)
   for (j = 0; j < MAXSNAPS; ++j)
   {
     MergedGal[MergedNr].GridHistory[j] = Gal[p].GridHistory[j];
+    MergedGal[MergedNr].GridColdGas[j] = Gal[p].GridColdGas[j];
+    MergedGal[MergedNr].GridHotGas[j] = Gal[p].GridHotGas[j];
     MergedGal[MergedNr].GridStellarMass[j] = Gal[p].GridStellarMass[j];
     MergedGal[MergedNr].GridSFR[j] = Gal[p].GridSFR[j];
     MergedGal[MergedNr].GridZ[j] = Gal[p].GridZ[j];
@@ -393,7 +395,6 @@ void add_galaxy_to_merger_list(int p)
     MergedGal[MergedNr].QuasarActivity[j] = Gal[p].QuasarActivity[j];
     MergedGal[MergedNr].DynamicalTime[j] = Gal[p].DynamicalTime[j];
     MergedGal[MergedNr].QuasarSubstep[j] = Gal[p].QuasarSubstep[j];
-    MergedGal[MergedNr].GridColdGas[j] = Gal[p].GridColdGas[j];
     MergedGal[MergedNr].LenMergerGal[j] = Gal[p].LenMergerGal[j];
     MergedGal[MergedNr].GridBHMass[j] = Gal[p].GridBHMass[j];
     MergedGal[MergedNr].GridReionMod[j] = Gal[p].GridReionMod[j];

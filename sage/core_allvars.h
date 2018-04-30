@@ -134,8 +134,10 @@ struct GALAXY
   float infallVvir;
   float infallVmax;
 
-  int GridPos;
+  int32_t GridPos;
   int *GridHistory;
+  float *GridColdGas;
+  float *GridHotGas;
   float *GridStellarMass;
   float *GridSFR;
   float *GridZ;
@@ -149,7 +151,6 @@ struct GALAXY
   int *QuasarActivity;
   float *DynamicalTime; 
   int *QuasarSubstep;
-  float *GridColdGas;
   int *LenMergerGal;
   float *GridBHMass;      
   float *GridReionMod;

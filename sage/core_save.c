@@ -86,13 +86,13 @@ void save_galaxies(int filenr, int tree)
         } 
       }
 
-      if(HaloGal[i].SnapNum == max_snap && Halo[HaloGal[i].HaloNr].Descendant == -1)
+      if(HaloGal[i].SnapNum == max_snap && Halo[HaloGal[i].HaloNr].Descendant == -1) 
       {
-          write_temporal_arrays(&HaloGal[i], save_fd[n]); // Input snapshots are ordered highest -> lowest so it'll be 0th element. 
-          TotGalaxies[n]++;
-          TreeNgals[n][tree]++;          
+        write_temporal_arrays(&HaloGal[i], save_fd[n]); // Input snapshots are ordered highest -> lowest so it'll be 0th element. 
+        TotGalaxies[n]++;
+        TreeNgals[n][tree]++;          
       } 
-
+    
     } // NumGals loop.
   } // NOUT loop.
 
