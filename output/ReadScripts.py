@@ -56,6 +56,17 @@ def Read_SAGE_Objects(Model_Name, Object_Desc, Contain_TreeInfo, Dot, fnr, comm=
         quit() 
         
     fin = open(fname, 'rb')  # Open the file
+    Nsubsteps = np.fromfile(fin, np.dtype(np.int32),1) 
+    Nsnap = np.fromfile(fin, np.dtype(np.int32),1) 
+    redshifts = np.fromfile(fin, np.dtype(np.float64), int(Nsnap)) 
+    Hubble_h = np.fromfile(fin, np.dtype(np.float64),1) 
+    Omega = np.fromfile(fin, np.dtype(np.float64),1) 
+    OmegaLambda = np.fromfile(fin, np.dtype(np.float64),1) 
+    BaryonFrac = np.fromfile(fin, np.dtype(np.float64),1) 
+    PartMass = np.fromfile(fin, np.dtype(np.float64),1) 
+    BoxSize = np.fromfile(fin, np.dtype(np.float64),1) 
+    GridSize = np.fromfile(fin, np.dtype(np.int32),1) 
+
     if (Contain_TreeInfo == 1):
         Ntrees = np.fromfile(fin,np.dtype(np.int32),1)  # Read number of trees in file
         TotNTrees = TotNTrees + Ntrees  # Update total sim trees number
@@ -91,6 +102,18 @@ def Read_SAGE_Objects(Model_Name, Object_Desc, Contain_TreeInfo, Dot, fnr, comm=
         exit()
     
     fin = open(fname, 'rb')  # Open the file
+    Nsubsteps = np.fromfile(fin, np.dtype(np.int32),1) 
+    Nsnap = np.fromfile(fin, np.dtype(np.int32),1) 
+    redshifts = np.fromfile(fin, np.dtype(np.float64), int(Nsnap)) 
+    Hubble_h = np.fromfile(fin, np.dtype(np.float64),1) 
+    Omega = np.fromfile(fin, np.dtype(np.float64),1) 
+    OmegaLambda = np.fromfile(fin, np.dtype(np.float64),1) 
+    BaryonFrac = np.fromfile(fin, np.dtype(np.float64),1) 
+    PartMass = np.fromfile(fin, np.dtype(np.float64),1) 
+    BoxSize = np.fromfile(fin, np.dtype(np.float64),1) 
+    GridSize = np.fromfile(fin, np.dtype(np.int32),1) 
+
+
     if (Contain_TreeInfo == 1):
         Ntrees = np.fromfile(fin, np.dtype(np.int32), 1)  # Read number of trees in file
     NtotHalos = np.fromfile(fin, np.dtype(np.int32), 1)[0]  # Read number of gals in file.
@@ -144,28 +167,29 @@ def ReadGals_SAGE(DirName, fnr, MAXSNAPS, comm=None):
 
     Galdesc_full = [ 
          ('TreeNr', np.int32),
-         ('mergeType', np.int32),
-         ('GridHistory', (np.int32, MAXSNAPS)), # Array index 48 
+         ('GridType', (np.int32, MAXSNAPS)),
+         ('GridFoFHaloNr', (np.int32, MAXSNAPS)),
+         ('GridHistory', (np.int32, MAXSNAPS)), 
+         ('GridColdGas', (np.float32, MAXSNAPS)),
+         ('GridHotGas', (np.float32, MAXSNAPS)),
+         ('GridEjectedMass', (np.float32, MAXSNAPS)),
+         ('GridDustColdGas', (np.float32, MAXSNAPS)),
+         ('GridDustHotGas', (np.float32, MAXSNAPS)),
+         ('GridDustEjectedMass', (np.float32, MAXSNAPS)),
+         ('GridBHMass', (np.float32, MAXSNAPS)),
          ('GridStellarMass', (np.float32, MAXSNAPS)),
          ('GridSFR', (np.float32, MAXSNAPS)),
          ('GridZ', (np.float32, MAXSNAPS)),
          ('GridFoFMass', (np.float32, MAXSNAPS)),
          ('EjectedFraction', (np.float32, MAXSNAPS)),  
          ('LenHistory', (np.int32, MAXSNAPS)),
-         ('GridOutflowRate', (np.float32, MAXSNAPS)),
-         ('GridInfallRate', (np.float32, MAXSNAPS)),
-         ('GridEjectedMass', (np.float32, MAXSNAPS)),
          ('QuasarActivity', (np.int32, MAXSNAPS)),
-         ('DynamicalTime', (np.float32, MAXSNAPS)),
          ('QuasarSubstep', (np.int32, MAXSNAPS)),
-         ('GridColdGas', (np.float32, MAXSNAPS)),
+         ('DynamicalTime', (np.float32, MAXSNAPS)),
          ('LenMergerGal', (np.int32, MAXSNAPS)),
-         ('GridBHMass', (np.float32, MAXSNAPS)),
          ('GridReionMod', (np.float32, MAXSNAPS)),
-         ('GridDustColdGas', (np.float32, MAXSNAPS)),
-         ('GridDustHotGas', (np.float32, MAXSNAPS)),
-         ('GridDustEjectedMass', (np.float32, MAXSNAPS)),
-         ('GridType', (np.int32, MAXSNAPS))
+         ('GridNgamma_HI', (np.float32, MAXSNAPS)),
+         ('Gridfesc', (np.float32, MAXSNAPS))
          ]
    
     print("Reading in SAGE files (Post STARBURST).")

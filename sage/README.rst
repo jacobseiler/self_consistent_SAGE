@@ -23,17 +23,17 @@ Header
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
 | ZZ                | Redshift of each snapshot.                                   | 64 bit double. | Unitless.  Will be greater than (or equal to) 0. | MAXSNAPS           |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
-| Hubble_h          | Hubble Parameter of the simulation.                          | 32 bit float.  | Unitless. Will be between 0 and 1                | 1                  |
+| Hubble_h          | Hubble Parameter of the simulation.                          | 64 bit double. | Unitless. Will be between 0 and 1                | 1                  |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
-| Omega             | Matter critical density parameter of the simulation.         | 32 bit float.  | Unitless.                                        | 1                  |
+| Omega             | Matter critical density parameter of the simulation.         | 64 bit double  | Unitless.                                        | 1                  |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
-| OmegaLambda       | Dark energy critical density parameter of the simulation.    | 32 bit float.  | Unitless.                                        | 1                  |
+| OmegaLambda       | Dark energy critical density parameter of the simulation.    | 64 bit double. | Unitless.                                        | 1                  |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
-| BaryonFrac        | (Cosmic) baryon fraction.                                    | 32 bit float.  | Unitless.                                        | 1                  |
+| BaryonFrac        | (Cosmic) baryon fraction.                                    | 64 bit double. | Unitless.                                        | 1                  |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
-| PartMass          | Mass of a single dark matter particle in the simulation.     | 32 bit float.  | 1.0e10 Msun/h.                                   | 1                  |
+| PartMass          | Mass of a single dark matter particle in the simulation.     | 64 bit double. | 1.0e10 Msun/h.                                   | 1                  |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
-| BoxSize           | Side-length of the simulation box.                           | 32 bit float.  | Mpc/h.                                           | 1                  |
+| BoxSize           | Side-length of the simulation box.                           | 64 bit double. | Mpc/h.                                           | 1                  |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
 | GridSize          | Number of grid cells along one side.                         | 32 bit integer.| Unitless.                                        | 1                  |
 +-------------------+--------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+

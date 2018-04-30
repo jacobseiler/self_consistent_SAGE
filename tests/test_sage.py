@@ -153,6 +153,8 @@ def check_smf():
                                                           mass[w_wrong]))
         raise RuntimeError
 
+    print(mass)
+
     print("")
     print("================")
     print("All tests passed")

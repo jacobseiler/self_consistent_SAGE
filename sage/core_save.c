@@ -60,11 +60,11 @@ void save_galaxies(int filenr, int tree)
 				ABORT(0);
       }
 
-      int32_t number_header_values = 11+(MAXSNAPS*2)+Ntrees;
+      int32_t number_header_values = 5 + (7+MAXSNAPS)*2 + Ntrees;
 			// write out placeholders for the header data.
 			int32_t *tmp_buf = malloc(number_header_values * sizeof(int32_t));
 			memset( tmp_buf, 0, number_header_values * sizeof(int32_t));
-			fwrite( tmp_buf, sizeof(int), Ntrees + 2, save_fd[n] );
+			fwrite( tmp_buf, sizeof(int), number_header_values, save_fd[n] );
 			free( tmp_buf );
 		}
     
@@ -167,11 +167,14 @@ void save_merged_galaxies(int filenr, int tree)
       ABORT(0);
     }
 
+
+    int32_t number_header_values = 5 + (7+MAXSNAPS)*2 + Ntrees;
     // write out placeholders for the header data.
-    size_t size = (Ntrees + 2)*sizeof(int);
-    int* tmp_buf = (int*)malloc( size );
-    memset( tmp_buf, 0, size );
-    fwrite( tmp_buf, sizeof(int), Ntrees + 2, save_fd2);
+    int32_t *tmp_buf = malloc(number_header_values * sizeof(int32_t));
+    memset( tmp_buf, 0, number_header_values * sizeof(int32_t));
+    fwrite( tmp_buf, sizeof(int), number_header_values, save_fd2);
+
+    // write out placeholders for the header data.
     free( tmp_buf );
   }
 
@@ -196,6 +199,19 @@ void finalize_merged_galaxy_file(void)
 
   // seek to the beginning.
   fseek( save_fd2, 0, SEEK_SET );
+
+    int32_t steps = STEPS;
+ 
+  myfwrite(&steps, sizeof(int32_t), 1, save_fd2); 
+  myfwrite(&MAXSNAPS, sizeof(int32_t), 1, save_fd2);
+  myfwrite(ZZ, sizeof(*(ZZ)), MAXSNAPS, save_fd2); 
+  myfwrite(&Hubble_h, sizeof(double), 1, save_fd2);
+  myfwrite(&Omega, sizeof(double), 1, save_fd2);
+  myfwrite(&OmegaLambda, sizeof(double), 1, save_fd2);
+  myfwrite(&BaryonFrac, sizeof(double), 1, save_fd2);
+  myfwrite(&PartMass, sizeof(double), 1, save_fd2);
+  myfwrite(&BoxSize, sizeof(double), 1, save_fd2);
+  myfwrite(&GridSize, sizeof(int32_t), 1, save_fd2);
 
   myfwrite(&Ntrees, sizeof(int), 1, save_fd2);
   myfwrite(&TotMerged, sizeof(int), 1, save_fd2);
