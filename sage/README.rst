@@ -91,7 +91,7 @@ its value will be given by the **Default:** parameter.
 +--------------------+---------------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
 | GridFoFMass        | Mass of the FoF halo the galaxy belongs to.  Default: 0.0.          | 32 bit float.  | 1.0e10 Msun/h.                                   | MAXSNAPS           |
 +--------------------+---------------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
-| EjectedFraction    | Fraction of baryons in the ejected reservoir.  Default: 0.0.       | 32 bit float.  | Unitless.  Between 0 and 1 (inclusive).          | MAXSNAPS           |
+| EjectedFraction    | Fraction of baryons in the ejected reservoir.  Default: 0.0.        | 32 bit float.  | Unitless.  Between 0 and 1 (inclusive).          | MAXSNAPS           |
 +--------------------+---------------------------------------------------------------------+----------------+--------------------------------------------------+--------------------+
 | LenHistory         | Number of dark matter particles of the host halo (**not FOF halo**).|                |                                                  |                    |
 |                    | Default: -1.                                                        | 32 bit integer.| Unitless.  Greater than 0.                       | MAXSNAPS           |
