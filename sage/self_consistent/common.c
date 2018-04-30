@@ -236,8 +236,8 @@ void write_temporal_arrays(struct GALAXY *g, FILE *fp)
   WRITE_GRID_PROPERTY(g->GridDustColdGas, MAXSNAPS);
   WRITE_GRID_PROPERTY(g->GridDustHotGas, MAXSNAPS);
   WRITE_GRID_PROPERTY(g->GridDustEjectedMass, MAXSNAPS);
-  WRITE_GRID_PROPERTY(g->GridStellarMass, MAXSNAPS);
   WRITE_GRID_PROPERTY(g->GridBHMass, MAXSNAPS);
+  WRITE_GRID_PROPERTY(g->GridStellarMass, MAXSNAPS);
   WRITE_CONVERTED_GRID_PROPERTY(g->GridSFR, MAXSNAPS, SFR_conversion, typeof(*(g->GridSFR))); 
   WRITE_GRID_PROPERTY(g->GridZ, MAXSNAPS);
   WRITE_GRID_PROPERTY(g->GridFoFMass, MAXSNAPS);
