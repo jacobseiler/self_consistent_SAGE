@@ -7,8 +7,6 @@
 #include "core_allvars.h"
 #include "core_proto.h"
 
-
-
 double infall_recipe(int centralgal, int ngal, double Zcurr, int halonr)
 {
   int i;
@@ -56,27 +54,31 @@ double infall_recipe(int centralgal, int ngal, double Zcurr, int halonr)
       Gal[i].ICS = Gal[i].MetalsICS = 0.0; 
   }
 
-  // include reionization if necessary 
-  if(ReionizationOn == 1)
+
+  // Include reionization if necessary.
+  switch (ReionizationOn)
   {
-    reionization_modifier = do_reionization(centralgal, Zcurr, 0);
-  }
-  else if (ReionizationOn == 2) 
-  {     
-    reionization_modifier = do_grid_reionization(centralgal, Zcurr, &dummy);
-  }
-  else if (ReionizationOn == 3 || ReionizationOn == 4)
-  {
-    status = do_self_consistent_reionization(centralgal, halonr, 1, &reionization_modifier);
-    if (status == EXIT_FAILURE)
-    {
-      ABORT(EXIT_FAILURE);     
-    }
-  }
-  else
-  {
-    reionization_modifier = 1.0;
-  }
+    case 1:
+      reionization_modifier = do_reionization(centralgal, Zcurr, 0);
+      break;
+
+    case 2: 
+      reionization_modifier = do_grid_reionization(centralgal, Zcurr, &dummy);
+      break;
+
+    case 3:
+    case 4:
+      status = do_self_consistent_reionization(centralgal, halonr, 1, &reionization_modifier);
+      if (status != EXIT_SUCCESS) 
+      {
+        ABORT(EXIT_FAILURE);
+      }
+      break;
+
+    default:
+      reionization_modifier = 1.0;
+      break;
+  } 
 
   Gal[centralgal].GridReionMod[Halo[halonr].SnapNum] = reionization_modifier;
 
@@ -117,44 +119,55 @@ double infall_recipe(int centralgal, int ngal, double Zcurr, int halonr)
   return infallingMass;
 }
 
-
-
-void strip_from_satellite(int halonr, int centralgal, int gal, int32_t step)
+void strip_from_satellite(int halonr, int centralgal, int gal) 
 {
-  double reionization_modifier, strippedGas, strippedGasMetals, metallicity, dummy;
-  int32_t status; 
- 
-  if(ReionizationOn == 1)
-  {
-    reionization_modifier = do_reionization(centralgal, ZZ[Halo[halonr].SnapNum], 0); 
-  }
-  else if (ReionizationOn == 2) 
-  {
-    reionization_modifier = do_grid_reionization(centralgal, ZZ[Halo[halonr].SnapNum], &dummy);
-  }
-  else if (ReionizationOn == 3 || ReionizationOn == 4)
-  {
-    status = do_self_consistent_reionization(centralgal, halonr, step+1, &reionization_modifier);
-    if (status == EXIT_FAILURE)
-    {
-      ABORT(EXIT_FAILURE);
-    }
-  }
+  double reionization_modifier, strippedGas, strippedGasMetals, metallicity;
+  int32_t j; 
 
-  else
-  {
-    reionization_modifier = 1.0;
-  }
+  int32_t snapnum = Halo[Gal[gal].HaloNr].SnapNum;
 
+  reionization_modifier = -1.0; // Initialize to prevent unintialized value warning.
 
   /*
-  if (Gal[gal].HaloNr == 2385)
-  {
-    printf("SnapNum %d\tReionMod %.4f\tGridHistory[76] %d\tGridHistory[77] %d\tGridHistory[98] %d\tReionMod[76] %.4f\n", Halo[Gal[gal].HaloNr].SnapNum, reionization_modifier, Gal[gal].GridHistory[76], Gal[gal].GridHistory[77], Gal[gal].GridHistory[98], Gal[gal].GridReionMod[76]); 
-    printf("%d\n",Gal[gal].IsMerged);
-  }
+  This functions strips the gas from a satellite galaxy and adds it to the reservoirs of the
+  central galaxy.
+
+  What we need is the answer to the question "How many baryons does the satellite galaxy posess?"
+  After a galaxy becomes a satellite, it no longer interacts with the outside IGM; it is
+  'protected' by the background FoF halo.  Hence the `reionization_modifier` value the satellite
+  galaxy uses will be the value WHEN IT BECAME A SATELLITE - it does not need to be recalculated
+  as the galaxy isn't interacting with a (potentially) ionized IGM.
+
+  Hence what we do in the following code block is go back through the satellite galaxies history
+  and find the last valid `reionization_modifier` value and use that.
   */
-  Gal[gal].GridReionMod[Halo[Gal[gal].HaloNr].SnapNum] = reionization_modifier;
+
+  // As the function is called for every substep, we only need to do this check once and then we can
+  // just use the current value for `GridReionMod`.
+  if (Gal[gal].GridReionMod[snapnum] == -1) 
+  {
+    // If we don't have a current value, go back through the history and find the newest one.
+    for (j = snapnum - 1; j > -1; --j)
+    {
+      //printf("Gal %d halonr %d Snap %d GridReionMod %.4e\n", gal, halonr, j, Gal[gal].GridReionMod[j]);
+      if (Gal[gal].GridReionMod[j] != - 1)
+      {
+        reionization_modifier = Gal[gal].GridReionMod[j];
+        break;
+      } 
+    }     
+  }
+  else
+  {
+    reionization_modifier = Gal[gal].GridReionMod[snapnum];
+  }
+
+  //double old_value = do_reionization(gal, ZZ[Halo[halonr].SnapNum], 0);
+  //printf("Old Reionization_modifier = %.4e\tNew = %.4e\n", old_value, reionization_modifier);
+ 
+  XASSERT(reionization_modifier != -1, "The reionization modifier should be between 0 and 1; it currently has the default value of -1.\nBackground FoF Halo %d\tCentralGalaxy %d\tSatellite Halo %d\tSatellite Galaxy %d\n", halonr, centralgal, Gal[gal].HaloNr, gal); 
+
+  Gal[gal].GridReionMod[snapnum] = reionization_modifier;
   //strippedGas = -1.0 *
     //(reionization_modifier * BaryonFrac * Gal[gal].Mvir - (Gal[gal].StellarMass + Gal[gal].ColdGas + Gal[gal].HotGas + Gal[gal].EjectedMass + Gal[gal].BlackHoleMass + Gal[gal].ICS) ) / STEPS;
 

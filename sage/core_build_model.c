@@ -346,7 +346,7 @@ void evolve_galaxies(int halonr, int ngal, int tree)	// Note: halonr is here the
       }
 			else 
 				if(Gal[p].Type == 1 && Gal[p].HotGas > 0.0)
-					strip_from_satellite(halonr, centralgal, p, 1);
+					strip_from_satellite(halonr, centralgal, p);
 
       // Determine the cooling gas given the halo properties 
       coolingGas = cooling_recipe(p, substep_dt); 

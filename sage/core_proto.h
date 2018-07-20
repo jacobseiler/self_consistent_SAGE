@@ -64,7 +64,7 @@ void make_bulge_from_burst(int p);
 void grow_black_hole(int merger_centralgal, double mass_ratio, int32_t step);
 void check_disk_instability(int p, int centralgal, int halonr, double time, double dt, int step, int tree, int ngal);
 
-void strip_from_satellite(int halonr, int centralgal, int gal, int32_t step);
+void strip_from_satellite(int halonr, int centralgal, int gal);
 void disrupt_satellite_to_ICS(int centralgal, int gal, int tree);
 void quasar_mode_wind(int gal, float BHaccrete, int32_t step);
 

@@ -163,7 +163,7 @@ def run_my_sage(ini_name="test_mini_millennium.ini"):
     print("")
 
 
-def check_smf(galaxy_name="test"):
+def check_smf(galaxy_name="test", mass_tol=3.0e-3):
     """
     Checks the stellar mass of the galaxies.
 
@@ -175,6 +175,11 @@ def check_smf(galaxy_name="test"):
 
     galaxy_name: String. Optional, default: 'test'. 
         Prefix name for the galaxies we are checking.        
+
+    mass_tol: Float. Optional, default: 3.0e-3.
+        The allowed difference between the stellar mass of the test galaxies
+        and the stellar mass in the 'test_RSAGE' repo.  If any galaxy has a
+        (absolute) difference larger than this, a RuntimeError is raised. 
 
     Returns
     ----------
@@ -235,28 +240,44 @@ def check_smf(galaxy_name="test"):
                                                           mass_test[w_wrong]))
         raise RuntimeError
 
-    # Now let's check compare the mass of the test to the data. 
+    # Now let's check compare the mass of the test to the 'test_RSAGE' repo. 
 
-    mass_data = np.loadtxt("{0}/mini_millennium_testmass.txt".format(test_dir)) 
+    mass_repo = np.loadtxt("{0}/mini_millennium_testmass.txt".format(test_dir)) 
   
-    if len(mass_test) != len(mass_data):
+    if len(mass_test) != len(mass_repo):
         print("For the test data we had {0} galaxies at Snapshot 63 with > 0 "
               "Stellar Mass.  This is compared to {1} galaxies for the "
               "CORRECT mass data.".format(len(mass_test), len(mass_data)))
         print(mass_test[0:10])
-        print(mass_data[0:10])
+        print(mass_repo[0:10])
         raise RuntimeError
  
-    mass_difference = mass_test - mass_data
-    w_wrong = np.where(mass_difference > 3e-3)[0]
+    mass_difference = mass_test - mass_repo
+    w_wrong = np.where(abs(mass_difference) > mass_tol)[0]
     if (len(w_wrong) > 0):
         print("There must be no difference between the mass of the test run and"
               " the data in the test_RSAGE repository")
-        print("Test Galaxies {0} had stellar mass {1} and data "
+        print("Test Galaxies {0} had stellar mass {1} and repo "
               "have stellar mass {2}".format(w_gal[w_wrong],
                                              mass_test[w_wrong],
-                                             mass_data[w_wrong]))
+                                             mass_repo[w_wrong]))
         print("The difference is {0}".format(mass_difference[w_wrong]))
+        print("Out of a total {0} galaxies, {1} had a mass difference greater "
+              "than the tolerance level of {2}".format(len(mass_difference),
+                                                       len(w_wrong),
+                                                       mass_tol))
+        print("The average mass difference of these galaxies is "
+              "{0} with an overall average mass difference of {1}" \
+              .format(np.mean(abs(mass_difference[w_wrong])),
+                      np.mean(abs(mass_difference))))
+
+        max_diff = np.argmax(abs(mass_difference))
+        
+        print("The largest mass difference is {0} which corresponds to a {1}% " 
+              "shift compared to the test data (mass {2})." \
+              .format(mass_difference[max_diff],
+                      abs(mass_difference[max_diff]/mass_test[max_diff]*100.0),
+                      mass_test[max_diff]))
         raise RuntimeError
 
 
